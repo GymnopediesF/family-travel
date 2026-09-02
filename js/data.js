@@ -269,7 +269,7 @@ const DESTINATIONS = [
         name: "孔氏南宗家庙",
         category: "人文",
         effort: "轻松",
-        images: [], // 待补图，建议命名 quzhou/KongMiao_1.jpg
+        images: ["quzhou/KongShiNanZong_1.jpg", "quzhou/KongShiNanZong_2.jpg"],
         conclusion: "衢州必去第一站，园区平坦、有树荫座椅，慢慢逛不累，预留 1–1.5 小时。",
         background: "全国仅有的两座孔氏家庙之一（另一座在曲阜），“南孔圣地”的核心，红墙古柏很出片，内有安静的后花园。",
         ticket: "10 元（检票后送 mini《论语》纪念品）；游览 1–1.5 小时。",
@@ -339,7 +339,7 @@ const DESTINATIONS = [
         name: "府山公园",
         category: "人文",
         effort: "适中",
-        images: [], // 待补图，建议命名 quzhou/FuShan_1.jpg
+        images: ["quzhou/FuShanGongYuan_1.jpg"],
         conclusion: "有缓坡但整体平缓、树荫多，适合慢慢走，约 1 小时。",
         background: "老城区的“城市山林”，留存古城墙遗址、古树参天，可登高俯瞰老城，紧邻孔庙。",
         ticket: "免费；约 1 小时。",
@@ -352,7 +352,7 @@ const DESTINATIONS = [
         name: "北门街历史文化街区",
         category: "人文",
         effort: "适中",
-        images: [], // 待补图，建议命名 quzhou/BeiMenJie_1.jpg
+        images: ["quzhou/BeiMenJie_1.jpg", "quzhou/BeiMenJie_2.jpg"],
         conclusion: "平路慢逛，与孔庙、博物馆、水亭门顺路，饭后散步很合适，1–1.5 小时。",
         background: "老建筑保留完整的古街，夜晚灯笼亮起氛围感足。",
         ticket: "免费；1–1.5 小时。",
@@ -366,7 +366,7 @@ const DESTINATIONS = [
         name: "鹿鸣大草坪",
         category: "人文",
         effort: "轻松",
-        images: [], // 待补图，建议命名 quzhou/LuMing_1.jpg
+        images: ["quzhou/LuMingDaCaoPing_1.jpg", "quzhou/LuMingDaCaoPing_2.jpg"],
         conclusion: "全平地，坐草坪上吹风就很治愈，还能喂小鹿，长辈孩子都喜欢，1–1.5 小时。",
         background: "一大片草坪适合拍照放空，旁边的文化院街可以喂小鹿，紧挨网红红砖“衢州礼堂”。",
         ticket: "免费；1–1.5 小时。",
@@ -380,7 +380,7 @@ const DESTINATIONS = [
         name: "衢州礼堂",
         category: "人文",
         effort: "轻松",
-        images: [], // 待补图，建议命名 quzhou/LiTang_1.jpg
+        images: ["quzhou/LiTang_1.jpg", "quzhou/LiTang_2.jpg"],
         conclusion: "纯拍照点、不费腿，拱形长廊和爱心红墙很出片，30–40 分钟。",
         background: "网红红砖建筑，拱形长廊、爱心红墙，免费无需预约。",
         ticket: "免费；30–40 分钟。",
@@ -393,7 +393,7 @@ const DESTINATIONS = [
         name: "斗潭茶馆",
         category: "人文",
         effort: "轻松",
-        images: [], // 待补图，建议命名 quzhou/DouTan_1.jpg
+        images: ["quzhou/DouTanChaGuan_1.jpg", "quzhou/DouTanChaGuan_2.jpg"],
         conclusion: "本次最“妈妈友好”的场所——坐下喝茶聊天完全不用走路，适合下午茶或雨天备选。",
         background: "临斗潭公园荷塘的老牌茶馆，竹椅木桌，5 元清茶无限续杯，有川剧变脸、老电影放映，本地人扎堆。",
         ticket: "清茶约 5 元/位，无限续杯；建议坐 2 小时。",
@@ -453,7 +453,7 @@ const DESTINATIONS = [
         name: "江郎山",
         category: "自然",
         effort: "费力",
-        images: [], // 待补图，建议命名 quzhou/JiangLangShan_1.jpg
+        images: ["quzhou/JiangLangShan_1.jpg", "quzhou/JiangLangShan_2.jpg"],
         conclusion: "台阶陡、体力消耗大，不建议长辈硬爬；可乘观光车/索道到观景平台看三爿石，只走平缓段、不登顶。",
         background: "国家级重点风景名胜区、4A，以“三爿石”奇峰著称，被称为“神州丹霞第一峰”，位于江山市，距市区车程 1 小时以上。",
         ticket: "大门票旺季约 100 元、淡季约 60 元（工作日 A 级免大门票）；索道/观光车另计；建议留大半天。",

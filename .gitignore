@@ -1,0 +1,8 @@
+# 原始素材（攻略整理稿），不公开
+claw_sum/
+
+# 操作系统 / 编辑器杂项
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/

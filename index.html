@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>家庭旅行路线推荐</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>家庭旅行路线推荐</h1>
+    <p class="subtitle">先看看景点，再勾选想去的地方，我们来推荐最合适的路线</p>
+  </header>
+
+  <!-- 目的地切换标签（由 JS 生成） -->
+  <nav id="dest-tabs" class="dest-tabs"></nav>
+
+  <main>
+    <!-- 模块一：景点展示 -->
+    <section id="spots-section">
+      <h2 class="section-title" id="spots-title">景点介绍</h2>
+      <div id="spots" class="spots-grid"><!-- 由 JS 生成 --></div>
+    </section>
+
+    <!-- 模块二：问卷调查 -->
+    <section id="survey-section">
+      <h2 class="section-title">选出你想去的景点</h2>
+      <p class="section-hint">勾选任意数量，越贴合你的心意越准。</p>
+      <form id="survey-form">
+        <div id="survey-options" class="survey-grid"><!-- 由 JS 生成 --></div>
+        <div class="survey-actions">
+          <button type="submit" class="btn-primary">查看推荐路线</button>
+          <button type="button" id="reset-btn" class="btn-ghost">重新选择</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 结果区 -->
+    <section id="result-section" class="hidden">
+      <h2 class="section-title">推荐路线</h2>
+      <div id="result"><!-- 由 JS 生成 --></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>为家人挑选旅行路线 · 用心规划每一段旅程</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -724,7 +724,7 @@ const FOODS = [
     name: "不老神鸡（真空装）",
     group: "特产",
     spicy: "不辣",
-    images: [],
+    images: ["local_specialty/BuLaoShenJi.jpg"],
     what: "衢州老牌卤味连锁，鸡类卤味可真空打包。",
     why: "本地人推荐，方便携带分送；真空装有人觉得没味道，建议买整只现卤的。",
     where: "不老神鸡门店。",

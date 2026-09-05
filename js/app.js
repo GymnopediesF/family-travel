@@ -37,46 +37,110 @@
     return typeof COORDS !== "undefined" && COORDS[id] ? COORDS[id] : null;
   }
 
-  // ---------- 渲染目的地切换标签 ----------
+  // 通用信息块（标签 + 内容）
+  function infoBlock(label, value) {
+    if (!value) return "";
+    return (
+      '<div class="spot-field"><span class="field-label">' +
+      label +
+      "</span><p>" +
+      value +
+      "</p></div>"
+    );
+  }
+
+  // 记录顶部标签栏高度，供手机端粘性地图定位
+  function setTabsHeight() {
+    const nav = document.getElementById("dest-tabs");
+    if (nav) {
+      document.documentElement.style.setProperty(
+        "--tabs-h",
+        nav.offsetHeight + "px"
+      );
+    }
+  }
+
+  // ---------- 渲染顶部切换标签（目的地 + 美食特产） ----------
   function renderTabs() {
     const nav = document.getElementById("dest-tabs");
-    nav.innerHTML = DESTINATIONS.map(function (dest, i) {
+    let html = DESTINATIONS.map(function (dest, i) {
       return (
-        '<button class="dest-tab" data-index="' +
+        '<button class="dest-tab" data-view="dest" data-index="' +
         i +
         '">' +
         dest.name +
         "</button>"
       );
     }).join("");
+    // 美食特产标签
+    html += '<button class="dest-tab" data-view="food">衢州美食特产</button>';
+    nav.innerHTML = html;
 
     nav.addEventListener("click", function (e) {
       const btn = e.target.closest(".dest-tab");
       if (!btn) return;
-      selectDest(parseInt(btn.getAttribute("data-index"), 10));
+      if (btn.getAttribute("data-view") === "food") {
+        showFoodView(btn);
+      } else {
+        selectDest(parseInt(btn.getAttribute("data-index"), 10));
+      }
     });
+  }
+
+  function setActiveTab(btn) {
+    Array.prototype.forEach.call(
+      document.querySelectorAll(".dest-tab"),
+      function (b) {
+        b.classList.toggle("active", b === btn);
+      }
+    );
   }
 
   function selectDest(index) {
     currentDest = DESTINATIONS[index];
     // 高亮当前标签
-    Array.prototype.forEach.call(
-      document.querySelectorAll(".dest-tab"),
-      function (b, i) {
-        b.classList.toggle("active", i === index);
-      }
+    const btn = document.querySelector(
+      '.dest-tab[data-view="dest"][data-index="' + index + '"]'
     );
+    setActiveTab(btn);
+    // 显示旅行视图、隐藏美食视图
+    document.getElementById("travel-view").classList.remove("hidden");
+    document.getElementById("food-view").classList.add("hidden");
     // 更新标题、渲染内容、清空上一轮结果
     document.getElementById("overview-title").textContent =
       currentDest.name + " · 景点地图";
     document.getElementById("spots-title").textContent =
       currentDest.name + " · 景点介绍";
+    renderTripInfo();
     renderSpots();
     renderSurvey();
     resetResult();
     renderOverviewMap();
-    // 切换目的地时回到景点区顶部
+    // 切换目的地时回到顶部
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // ---------- 渲染顶部行程时间 + 酒店信息 ----------
+  function renderTripInfo() {
+    const box = document.getElementById("trip-info");
+    const d = currentDest;
+    let html = "";
+    if (d.dates) {
+      html += '<div class="trip-dates">' + d.dates + "</div>";
+    }
+    if (d.hotel) {
+      html +=
+        '<div class="trip-hotel"><span class="trip-hotel-tag">住宿</span>' +
+        "<span><b>" +
+        d.hotel.name +
+        "</b>" +
+        (d.hotel.address
+          ? '<span class="trip-hotel-addr">（' + d.hotel.address + "）</span>"
+          : "") +
+        "</span></div>";
+    }
+    box.innerHTML = html;
+    box.style.display = html ? "" : "none";
   }
 
   // ---------- 渲染景点卡片 ----------
@@ -171,9 +235,9 @@
   // ---------- 渲染问卷勾选项 ----------
   function renderSurvey() {
     const container = document.getElementById("survey-options");
-    // showcaseOnly 的景点只展示、不进问卷
+    // showcaseOnly 只展示、autoSecondDay 是二日游固定第二日，都不进问卷
     const options = currentDest.spots.filter(function (spot) {
-      return !spot.showcaseOnly;
+      return !spot.showcaseOnly && !spot.autoSecondDay;
     });
     container.innerHTML = options
       .map(function (spot) {
@@ -218,20 +282,53 @@
     return s ? s.name : id;
   }
 
+  // 第二日固定安排卡片（如龙游二日游的六春湖）
+  function secondDayCardHTML() {
+    const sd = currentDest.secondDay;
+    if (!sd) return "";
+    const tags = sd.spotIds
+      .map(function (id) {
+        return '<span class="route-spot-tag hit">' + spotName(id) + "</span>";
+      })
+      .join("");
+    return (
+      '<article class="route-card day2">' +
+      '<span class="route-badge day2">第二日</span>' +
+      '<h3 class="route-name">' +
+      sd.title +
+      "</h3>" +
+      '<p class="route-desc">' +
+      (sd.note || "") +
+      "</p>" +
+      '<div class="route-spots">' +
+      tags +
+      "</div></article>"
+    );
+  }
+
   // ---------- 渲染结果 ----------
-  function renderResults(results) {
+  function renderResults(results, selectedIds) {
     const section = document.getElementById("result-section");
     const container = document.getElementById("result");
+    const hasSecondDay = !!currentDest.secondDay;
 
+    let html;
     if (!results.length) {
-      container.innerHTML =
+      html =
         '<div class="route-card"><p class="route-desc">' +
         "你勾选的景点暂时没有匹配到现成路线，可以多选几个，或告诉规划者你的偏好。" +
         "</p></div>";
     } else {
-      container.innerHTML = results
+      // 二日游时，把匹配到的第一条作为“第一日”
+      const firstLabel = hasSecondDay ? "第一日" : "行程";
+      html = results
         .map(function (r, index) {
           const isTop = index === 0;
+          const badge = isTop
+            ? hasSecondDay
+              ? firstLabel + " · 最推荐"
+              : "最推荐"
+            : "备选";
           const tags = r.route.spotIds
             .map(function (id) {
               const hit = r.hits.indexOf(id) !== -1;
@@ -244,13 +341,12 @@
               );
             })
             .join("");
-
           return (
             '<article class="route-card' +
             (isTop ? " top" : "") +
             '">' +
             '<span class="route-badge">' +
-            (isTop ? "最推荐" : "备选") +
+            badge +
             "</span>" +
             '<h3 class="route-name">' +
             r.route.name +
@@ -269,10 +365,13 @@
         })
         .join("");
     }
+    // 追加固定的第二日
+    html += secondDayCardHTML();
+    container.innerHTML = html;
 
     section.classList.remove("hidden");
-    // 渲染最推荐路线的地图（按行程顺序编号连线）
-    renderRouteMap(results.length ? results[0].route : null);
+    // 按用户“选中的景点”直接渲染地图（无序号）
+    renderSelectedMap(selectedIds);
     section.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -349,19 +448,50 @@
       return m;
     });
     overviewMap.add(markers);
-    overviewMap.setFitView(markers);
+
+    // 酒店标记（若有坐标）
+    const all = markers.slice();
+    if (currentDest.hotel && currentDest.hotel.coord) {
+      const h = currentDest.hotel;
+      const hm = new AMapRef.Marker({
+        position: h.coord,
+        content: '<div class="hotel-marker">住</div>',
+        offset: new AMapRef.Pixel(-16, -16),
+        zIndex: 130,
+        label: {
+          content: '<span class="amap-label hotel-label">' + h.name + "</span>",
+          direction: "top"
+        }
+      });
+      hm.on("click", function () {
+        const iw = new AMapRef.InfoWindow({
+          content:
+            '<div class="amap-iw"><b>' +
+            h.name +
+            "</b><br/>" +
+            (h.address || "") +
+            "</div>",
+          offset: new AMapRef.Pixel(0, -36)
+        });
+        iw.open(overviewMap, h.coord);
+      });
+      overviewMap.add(hm);
+      all.push(hm);
+    }
+    overviewMap.setFitView(all);
   }
 
-  // ---------- 地图：路线（按顺序编号连线） ----------
-  function renderRouteMap(route) {
+  // ---------- 地图：按“选中的景点”直接渲染（无序号、不连线） ----------
+  function renderSelectedMap(selectedIds) {
     const titleEl = document.getElementById("route-map-title");
     const box = document.getElementById("route-map");
-    if (!mapReady || !AMapRef || !route) {
+    const ids = selectedIds || [];
+    if (!mapReady || !AMapRef || !ids.length) {
       titleEl.style.display = "none";
       box.style.display = "none";
       return;
     }
-    const pts = route.spotIds
+    const pts = ids
       .map(function (id) {
         const c = coordOf(id);
         return c ? { name: spotName(id), pos: c } : null;
@@ -371,7 +501,7 @@
     titleEl.style.display = "";
     box.style.display = "";
     if (!pts.length) {
-      box.innerHTML = '<div class="map-hint">该路线景点暂无坐标数据。</div>';
+      box.innerHTML = '<div class="map-hint">所选景点暂无坐标数据。</div>';
       return;
     }
     if (!routeMap) {
@@ -379,11 +509,10 @@
     } else {
       routeMap.clearMap();
     }
-    const markers = pts.map(function (p, i) {
+    const markers = pts.map(function (p) {
       return new AMapRef.Marker({
         position: p.pos,
-        content: '<div class="num-marker">' + (i + 1) + "</div>",
-        offset: new AMapRef.Pixel(-15, -15),
+        title: p.name,
         label: {
           content: '<span class="amap-label">' + p.name + "</span>",
           direction: "top"
@@ -391,18 +520,7 @@
       });
     });
     routeMap.add(markers);
-    const line = new AMapRef.Polyline({
-      path: pts.map(function (p) {
-        return p.pos;
-      }),
-      strokeColor: "#2e8b7a",
-      strokeWeight: 5,
-      strokeStyle: "solid",
-      lineJoin: "round",
-      showDir: true
-    });
-    routeMap.add(line);
-    routeMap.setFitView();
+    routeMap.setFitView(markers);
   }
 
   function resetResult() {
@@ -417,6 +535,81 @@
     document.getElementById("result-section").classList.add("hidden");
   }
 
+  // ---------- 美食特产视图 ----------
+  function foodCardHTML(f) {
+    const img =
+      f.images && f.images.length
+        ? '<img src="images/' +
+          f.images[0] +
+          '" alt="' +
+          f.name +
+          '" loading="lazy" ' +
+          "onerror=\"this.onerror=null;this.src='" +
+          PLACEHOLDER +
+          "'\" />"
+        : '<img src="' + PLACEHOLDER + '" alt="' + f.name + '" />';
+
+    const spicyClass =
+      f.spicy === "辣"
+        ? "spicy-hot"
+        : f.spicy === "可选辣"
+        ? "spicy-mid"
+        : "spicy-none";
+
+    const tags = (f.tags || [])
+      .map(function (t) {
+        return '<span class="food-tag">' + t + "</span>";
+      })
+      .join("");
+
+    return (
+      '<article class="spot-card">' +
+      '<div class="spot-images">' +
+      img +
+      "</div>" +
+      '<div class="spot-body">' +
+      '<div class="spot-head">' +
+      '<h3 class="spot-name">' +
+      f.name +
+      "</h3>" +
+      '<span class="spicy-tag ' +
+      spicyClass +
+      '">' +
+      f.spicy +
+      "</span>" +
+      "</div>" +
+      (tags ? '<div class="food-tags">' + tags + "</div>" : "") +
+      infoBlock("是什么", f.what) +
+      infoBlock("为什么推荐", f.why) +
+      infoBlock("去哪吃 / 哪里买", f.where) +
+      "</div></article>"
+    );
+  }
+
+  function renderFoods() {
+    if (typeof FOODS === "undefined") return;
+    document.getElementById("food-list").innerHTML = FOODS.filter(function (f) {
+      return f.group === "美食";
+    })
+      .map(foodCardHTML)
+      .join("");
+    document.getElementById("specialty-list").innerHTML = FOODS.filter(function (
+      f
+    ) {
+      return f.group === "特产";
+    })
+      .map(foodCardHTML)
+      .join("");
+  }
+
+  function showFoodView(btn) {
+    setActiveTab(btn);
+    document.getElementById("travel-view").classList.add("hidden");
+    document.getElementById("food-view").classList.remove("hidden");
+    renderFoods();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   // ---------- 事件绑定（只绑一次） ----------
   function bindEvents() {
     const form = document.getElementById("survey-form");
@@ -428,7 +621,7 @@
         .map(function (c) {
           return c.value;
         });
-      renderResults(computeResults(selected));
+      renderResults(computeResults(selected), selected);
     });
 
     // 勾选高亮（事件委托）
@@ -448,6 +641,8 @@
   // ---------- 启动 ----------
   document.addEventListener("DOMContentLoaded", function () {
     renderTabs();
+    setTabsHeight();
+    window.addEventListener("resize", setTabsHeight);
     bindEvents();
     selectDest(0); // 默认显示第一个目的地
     loadAmap(); // 加载高德地图（加载完成后自动渲染总览地图）

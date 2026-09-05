@@ -383,3 +383,115 @@ main {
   .spot-images img { height: 150px; }
   .spot-name { font-size: 18px; }
 }
+
+
+/* ===== 行程时间 + 酒店信息横幅 ===== */
+.trip-info {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--primary);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 18px;
+  box-shadow: var(--shadow);
+}
+.trip-dates {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+}
+.trip-hotel {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text);
+}
+.trip-hotel-tag {
+  flex-shrink: 0;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 9px;
+  border-radius: 6px;
+}
+.trip-hotel-addr { color: var(--text-soft); font-size: 13.5px; }
+
+/* ===== 地图上的酒店标记 ===== */
+.hotel-marker {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+}
+.hotel-marker { }
+.amap-label.hotel-label { border-color: var(--accent); color: var(--primary-dark); font-weight: 600; }
+
+/* ===== 第二日固定卡片 ===== */
+.route-card.day2 { border-left-color: #6c7ae0; }
+.route-badge.day2 { background: #6c7ae0; }
+
+/* ===== 美食特产 ===== */
+.food-disclaimer {
+  background: #fff7ec;
+  border: 1px solid #f0d9b5;
+  color: #8a6d3b;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 18px;
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+.food-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.food-tag {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 12.5px;
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+.spicy-tag {
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  color: #fff;
+  white-space: nowrap;
+}
+.spicy-hot { background: #d1655a; }
+.spicy-mid { background: #e0a53a; }
+.spicy-none { background: #4caf82; }
+
+/* ===== 手机端：地图固定在顶部，其余内容可滚动 ===== */
+@media (max-width: 680px) {
+  #overview-section {
+    position: sticky;
+    top: var(--tabs-h, 52px);
+    z-index: 5;
+    background: var(--bg);
+    padding: 6px 0 8px;
+    box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.25);
+  }
+  #overview-section .section-title,
+  #overview-section .section-hint {
+    display: none;
+  }
+  #overview-section .map-box {
+    height: 210px;
+    margin-top: 0;
+  }
+}

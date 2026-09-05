@@ -16,38 +16,56 @@
   <nav id="dest-tabs" class="dest-tabs"></nav>
 
   <main>
-    <!-- 模块零：景点总览地图 -->
-    <section id="overview-section">
-      <h2 class="section-title" id="overview-title">景点地图</h2>
-      <p class="section-hint">地图上标出了本目的地的所有景点，点击标记可看名称。</p>
-      <div id="overview-map" class="map-box"></div>
-    </section>
+    <!-- ===== 旅行视图（龙游 / 衢州） ===== -->
+    <div id="travel-view">
+      <!-- 行程时间与酒店信息 -->
+      <div id="trip-info" class="trip-info"><!-- 由 JS 生成 --></div>
 
-    <!-- 模块一：景点展示 -->
-    <section id="spots-section">
-      <h2 class="section-title" id="spots-title">景点介绍</h2>
-      <div id="spots" class="spots-grid"><!-- 由 JS 生成 --></div>
-    </section>
+      <!-- 模块零：景点总览地图（手机端固定在顶部） -->
+      <section id="overview-section">
+        <h2 class="section-title" id="overview-title">景点地图</h2>
+        <p class="section-hint">地图上标出了本目的地的所有景点和住宿，点击标记可看名称。</p>
+        <div id="overview-map" class="map-box"></div>
+      </section>
 
-    <!-- 模块二：问卷调查 -->
-    <section id="survey-section">
-      <h2 class="section-title">选出你想去的景点</h2>
-      <p class="section-hint">勾选任意数量，越贴合你的心意越准。</p>
-      <form id="survey-form">
-        <div id="survey-options" class="survey-grid"><!-- 由 JS 生成 --></div>
-        <div class="survey-actions">
-          <button type="submit" class="btn-primary">查看推荐路线</button>
-          <button type="button" id="reset-btn" class="btn-ghost">重新选择</button>
-        </div>
-      </form>
-    </section>
+      <!-- 模块一：景点展示 -->
+      <section id="spots-section">
+        <h2 class="section-title" id="spots-title">景点介绍</h2>
+        <div id="spots" class="spots-grid"><!-- 由 JS 生成 --></div>
+      </section>
 
-    <!-- 结果区 -->
-    <section id="result-section" class="hidden">
-      <h2 class="section-title">推荐路线</h2>
-      <div id="result"><!-- 由 JS 生成 --></div>
-      <h3 class="route-map-title" id="route-map-title">路线地图（按行程顺序）</h3>
-      <div id="route-map" class="map-box"></div>
+      <!-- 模块二：问卷调查 -->
+      <section id="survey-section">
+        <h2 class="section-title">选出你想去的景点</h2>
+        <p class="section-hint">勾选任意数量，越贴合你的心意越准。</p>
+        <form id="survey-form">
+          <div id="survey-options" class="survey-grid"><!-- 由 JS 生成 --></div>
+          <div class="survey-actions">
+            <button type="submit" class="btn-primary">查看推荐路线</button>
+            <button type="button" id="reset-btn" class="btn-ghost">重新选择</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 结果区 -->
+      <section id="result-section" class="hidden">
+        <h2 class="section-title">推荐路线</h2>
+        <div id="result"><!-- 由 JS 生成 --></div>
+        <h3 class="route-map-title" id="route-map-title">你选中的景点地图</h3>
+        <div id="route-map" class="map-box"></div>
+      </section>
+    </div>
+
+    <!-- ===== 美食特产视图 ===== -->
+    <section id="food-view" class="hidden">
+      <div class="food-disclaimer">
+        以下美食与特产均从网络（小红书等）搜集整理，口味评价为网友主观分享，
+        <b>不保证真的好吃</b>，仅供参考，建议到店自己体验。
+      </div>
+      <h2 class="section-title">衢州特色美食</h2>
+      <div id="food-list" class="spots-grid"><!-- 由 JS 生成 --></div>
+      <h2 class="section-title">衢州特产（适合带走送人）</h2>
+      <div id="specialty-list" class="spots-grid"><!-- 由 JS 生成 --></div>
     </section>
   </main>
 

@@ -48,7 +48,19 @@ const DESTINATIONS = [
      ================================================================= */
   {
     id: "longyou",
-    name: "龙游 · 一日自驾",
+    name: "龙游 · 二日游",
+    dates: "游玩时间：10/3 – 10/5",
+    hotel: {
+      name: "见吾乡·竹栖谷溯溪度假民宿",
+      address: "龙游溪口镇庙下乡严村村头畈",
+      coord: [119.030, 28.870] // 待核对
+    },
+    // 二日游第二日固定安排（不进问卷，自动加入行程）
+    secondDay: {
+      title: "第二日 · 六春湖",
+      spotIds: ["liuchunhu"],
+      note: "第二日固定安排六春湖：高山草甸避暑，看云海竹海；路程较远，建议早出发。"
+    },
     spots: [
       // ---- 人文类 ----
       {
@@ -223,6 +235,7 @@ const DESTINATIONS = [
         id: "liuchunhu",
         name: "六春湖",
         category: "自然",
+        autoSecondDay: true, // 二日游第二日固定安排，不进问卷
         images: ["longyou/LiuChunHu_1.jpg", "longyou/LiuChunHu_2.jpg"],
         conclusion: "一日游时间偏紧，更适合两日游或早出发；前往需提前确认接驳交通。",
         background: "龙游南部的高山草甸，可看云海、竹海，山顶比山下低约 10℃，是夏日避暑核心，配套有索道/景交。",
@@ -244,7 +257,7 @@ const DESTINATIONS = [
         id: "nature",
         name: "纯自然线 · 灵山江山水自驾",
         desc: "以灵山江、衢江沿线的山水田园为主，视野开阔、人少清静，自驾一路都是风景。适合喜欢自然、露营、亲子玩水的家庭。",
-        spotIds: ["hushiguang", "baimatan", "duxiantou", "shijiaocun", "muchen", "liuchunhu"]
+        spotIds: ["hushiguang", "baimatan", "duxiantou", "shijiaocun", "muchen"]
       },
       {
         id: "mixed",
@@ -262,6 +275,12 @@ const DESTINATIONS = [
   {
     id: "quzhou",
     name: "衢州 · 二日游",
+    dates: "游玩时间：10/1 – 10/3",
+    hotel: {
+      name: "衢州沐光之尘",
+      address: "柯城区",
+      coord: [118.865, 28.945] // 待核对
+    },
     spots: [
       // ---- 人文类（不爬山，妈妈友好） ----
       {
@@ -537,3 +556,211 @@ const COORDS = {
   jianglangshan: [118.585, 28.575], // 江郎山（待核对）
   xianxiahu:     [118.550, 28.500]  // 仙霞湖（待核对）
 };
+
+
+/* =====================================================================
+   衢州美食 & 特产（网络搜集，主观口味分享，仅供参考）
+   =====================================================================
+   字段：
+     id     : 唯一短名
+     name   : 名称
+     group  : "美食" 或 "特产"（分两组展示）
+     spicy  : 辣度标签 "不辣" / "可选辣" / "辣"
+     images : 图片文件名数组，相对 images/ 目录（图在 images/local_specialty/）
+     what   : 是什么
+     why    : 为什么推荐
+     where  : 去哪吃 / 哪里买
+     tags   : “适合”简化成的标签数组
+   ===================================================================== */
+const FOODS = [
+  // ---------------- 美食 ----------------
+  {
+    id: "shuijinggao",
+    name: "水晶糕",
+    group: "美食",
+    spicy: "不辣",
+    images: ["local_specialty/NiuNaiShuiJingGao.jpg"],
+    what: "衢州特色冷饮甜品，糯叽叽的方块糕体，配椰奶、薄荷水或奶茶，凉丝丝清甜。",
+    why: "12 篇笔记里出镜率最高，几乎人手一杯，被称“解辣神器”，Q 弹有嚼劲。",
+    where: "喜多滋（更软糯）、水晶糕女孩 / 朱记冷饮（更弹韧）；马站底、水亭门都有，约 8–12 元。",
+    tags: ["不辣", "解辣神器", "老少皆宜", "饭后甜点"]
+  },
+  {
+    id: "danjuan",
+    name: "素琴 / 素仙蛋卷",
+    group: "美食",
+    spicy: "不辣",
+    images: ["local_specialty/SuQinDanJuan.jpg"],
+    what: "现烤现卖的蛋卷，蛋香浓郁、酥到掉渣，有原味、海苔、肉松、芝麻等口味。",
+    why: "放两天打开还很酥脆，甜度适中；测评里素仙（松园菜场）略胜素琴（马站底）。",
+    where: "松园菜场素仙蛋卷（8 点前口味多）、马站底素琴蛋卷，约 25 元一大盒。",
+    tags: ["不辣", "甜口", "可当伴手礼", "边走边吃"]
+  },
+  {
+    id: "gedaibing",
+    name: "搁袋饼",
+    group: "美食",
+    spicy: "可选辣",
+    images: ["local_specialty/GeDaiBing.jpg"],
+    what: "衢州特色早餐饼，饼身结实有咬劲，夹油条是经典搭配，也可夹肉馅。",
+    why: "本地人早餐灵魂，饼劲道、油条现炸不油腻，不辣版同样好吃。",
+    where: "狮桥街府山豆腐花·衢州搁袋饼（本地人认证，要排队）、松园菜场，4–7.5 元。",
+    tags: ["可选辣", "早餐必吃", "本地人推荐"]
+  },
+  {
+    id: "conghuamantou",
+    name: "葱花馒头",
+    group: "美食",
+    spicy: "不辣",
+    images: ["local_specialty/CongHuaManTou.jpg"],
+    what: "松软蓬松的馒头，馅是现炒的笋丁肉末，带隐约甜味。",
+    why: "完全不辣、清淡鲜香，长辈会喜欢。",
+    where: "松园菜场、汪馒头小吃店。",
+    tags: ["不辣", "清淡", "长辈友好"]
+  },
+  {
+    id: "kaobing",
+    name: "衢州烤饼",
+    group: "美食",
+    spicy: "可选辣",
+    images: ["local_specialty/QuZhouKaoBing.jpg"],
+    what: "炭火现烤的薄脆烤饼，梅干菜或葱肉馅，皮薄酥到掉渣。",
+    why: "街边王者，进阶吃法还能夹臭豆腐；不辣的梅干菜口味一样香。",
+    where: "马站底董爸爸烤饼（最出名）、蛟池街大烤饼、余记烤饼，约 8 元。",
+    tags: ["可选辣", "街边小吃", "现烤"]
+  },
+  {
+    id: "zong",
+    name: "衢州粽",
+    group: "美食",
+    spicy: "可选辣",
+    images: ["local_specialty/QuZhouZong.jpg"],
+    what: "衢州特有粽子，有芋头粽、腌菜粽、辣粽，糯米油润咸香。",
+    why: "芋头粽糯而不腻，腌菜粽咸香，热乎乎掰开很满足。",
+    where: "马站底衢宗粽、孔庙后的菊英粽店。",
+    tags: ["腌菜/芋头粽不辣", "咸香", "特色"]
+  },
+  {
+    id: "yatou",
+    name: "鸭头 / 鸭三件",
+    group: "美食",
+    spicy: "辣",
+    images: ["local_specialty/QuZhouYaTou.jpg"],
+    what: "衢州最出名的卤味，鸭头、鸭掌、鸭翅、兔头，卤得软烂入味。",
+    why: "“来衢州不吃鸭头等于没来”，入口即化、鸭掌胶质满满，本地夜宵常客。注意：衢州微辣≈外地中辣，不能吃辣一定要说“不辣/微微辣”。",
+    where: "满天香（评价好、可真空）、丈母娘、国良/国华、老裴（偏咸辣）；现卤现吃比真空打包好吃。",
+    tags: ["辣", "衢州名片", "可要求微辣/不辣", "现卤现吃"]
+  },
+  {
+    id: "fengan",
+    name: "炒粉干 / 凉拌粉干",
+    group: "美食",
+    spicy: "可选辣",
+    images: ["local_specialty/ChaoFenGan.jpg"],
+    what: "衢州特色粉干，炒的锅气足、凉拌的清爽开胃，口感介于米粉和面之间，Q 弹。",
+    why: "本地爱把鸭头卤汁浇在炒粉干上拌着吃；可要求不辣或微辣。",
+    where: "爱贞鸭头（炒粉干+鸭头汤）、胖子凉拌粉干、老裴鸭头。",
+    tags: ["可选辣", "主食", "Q弹"]
+  },
+  {
+    id: "jidanguo",
+    name: "葱花肉 / 鸡蛋粿",
+    group: "美食",
+    spicy: "不辣",
+    images: ["local_specialty/JiDanGuo.jpg"],
+    what: "韭菜鸡蛋馅的油煎饼（鸡蛋粿），葱花肉是肉馅葱油煎饼。",
+    why: "本地街边小食，香脆管饱（也有人觉得普通，见仁见智）。",
+    where: "松园菜场、马站底。",
+    tags: ["不辣", "街边小吃", "边走边吃"]
+  },
+  {
+    id: "yinpin",
+    name: "水晶糕女孩椰奶饮品 / 小侍茶",
+    group: "美食",
+    spicy: "不辣",
+    images: ["local_specialty/ShuiJingGaoNvHai.jpg"],
+    what: "衢州本地茶饮，特色是椰奶类饮品和茶饮。",
+    why: "双蛋小青椰清爽与浓郁并存，解辣解腻，年轻人喜欢。",
+    where: "马站底、水亭门。",
+    tags: ["不辣", "饮品", "解腻"]
+  },
+  {
+    id: "malatang",
+    name: "麻辣烫（雷记 / 135）",
+    group: "美食",
+    spicy: "辣",
+    images: ["local_specialty/MaLaTang.jpg"],
+    what: "衢州老牌麻辣烫，汤底醇厚，本地人夜宵首选。",
+    why: "本地私藏，街头烟火感足；可自选辣度但默认偏辣，不能吃辣的人慎点。",
+    where: "雷记麻辣烫、135 麻辣烫（周一三五开门，注意时间）。",
+    tags: ["辣", "夜宵", "可选辣度"]
+  },
+  {
+    id: "jiachangcai",
+    name: "衢州家常菜馆",
+    group: "美食",
+    spicy: "可选辣",
+    images: ["local_specialty/QuZhouJiaChangCai.jpg"],
+    what: "本地家常菜，代表菜有青番茄炒腊肉、田螺鸭掌煲、生炒鸡、开化清水鱼。",
+    why: "谢小厨青番茄炒腊肉很顶、田螺鸭掌煲特别；紫怡饭店锅气足、分量实在；多数菜可要求免辣/微辣。",
+    where: "谢小厨、紫怡饭店、壹心农家鱼馆、辉婶江西小馆。",
+    tags: ["可选辣", "正餐", "长辈请提前说少辣"]
+  },
+
+  // ---------------- 特产 ----------------
+  {
+    id: "te_mantianxiang",
+    name: "满天香鸭头（真空装）",
+    group: "特产",
+    spicy: "辣",
+    images: ["local_specialty/ManTianXiangYaTou.jpg"],
+    what: "可真空打包的卤鸭头，方便快递分送。",
+    why: "博主实测真空打包里相对最好吃的鸭头；不过真空版普遍不如现卤，能现吃尽量现吃。",
+    where: "满天香鸭头门店。",
+    tags: ["辣", "伴手礼", "可真空"]
+  },
+  {
+    id: "te_bulaoshenji",
+    name: "不老神鸡（真空装）",
+    group: "特产",
+    spicy: "不辣",
+    images: [],
+    what: "衢州老牌卤味连锁，鸡类卤味可真空打包。",
+    why: "本地人推荐，方便携带分送；真空装有人觉得没味道，建议买整只现卤的。",
+    where: "不老神鸡门店。",
+    tags: ["不辣", "伴手礼", "可真空"]
+  },
+  {
+    id: "te_dehui",
+    name: "德辉酥饼 / 薄酥饼",
+    group: "特产",
+    spicy: "不辣",
+    images: ["local_specialty/DeHuiSuBing.jpg"],
+    what: "衢州老字号酥饼，皮薄馅多又酥脆，还有桃酥、桃片糕、发糕。",
+    why: "20 块 320g 量足，酥脆点心，老人小孩都爱吃（也有微辣口味可选）。",
+    where: "德辉酥饼店（市区多家）、水亭门、马站底。",
+    tags: ["不辣", "伴手礼", "酥脆点心", "老少皆宜"]
+  },
+  {
+    id: "te_danjuan",
+    name: "素琴 / 素仙蛋卷",
+    group: "特产",
+    spicy: "不辣",
+    images: ["local_specialty/SuQinDanJuan.jpg"],
+    what: "现烤蛋卷，酥脆甜香，轻便好带。",
+    why: "放两天还酥脆，25 元一大盒性价比高，送人体面。",
+    where: "松园菜场（素仙）、马站底（素琴）。",
+    tags: ["不辣", "伴手礼", "甜口"]
+  },
+  {
+    id: "te_fagao",
+    name: "龙游发糕 / 桂花空心饼 / 邵永丰麻饼",
+    group: "特产",
+    spicy: "不辣",
+    images: ["local_specialty/LongYouFaGao.jpg"],
+    what: "衢州、龙游传统糕点：龙游发糕软糯甜香，另有桂花空心饼、邵永丰麻饼。",
+    why: "发糕便宜好吃；空心饼、麻饼是本地伴手礼组合（麻饼评价两极，买前可试吃）。",
+    where: "松园菜场、马站底、水亭门特产店。",
+    tags: ["不辣", "伴手礼", "传统糕点"]
+  }
+];

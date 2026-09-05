@@ -27,6 +27,16 @@
 
   let currentDest = null; // 当前选中的目的地对象
 
+  // ---- 高德地图状态 ----
+  let AMapRef = null; // 加载成功后的 AMap 命名空间
+  let overviewMap = null; // 景点总览地图实例
+  let routeMap = null; // 路线地图实例
+  let mapReady = false;
+
+  function coordOf(id) {
+    return typeof COORDS !== "undefined" && COORDS[id] ? COORDS[id] : null;
+  }
+
   // ---------- 渲染目的地切换标签 ----------
   function renderTabs() {
     const nav = document.getElementById("dest-tabs");
@@ -57,11 +67,14 @@
       }
     );
     // 更新标题、渲染内容、清空上一轮结果
+    document.getElementById("overview-title").textContent =
+      currentDest.name + " · 景点地图";
     document.getElementById("spots-title").textContent =
       currentDest.name + " · 景点介绍";
     renderSpots();
     renderSurvey();
     resetResult();
+    renderOverviewMap();
     // 切换目的地时回到景点区顶部
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -258,7 +271,138 @@
     }
 
     section.classList.remove("hidden");
+    // 渲染最推荐路线的地图（按行程顺序编号连线）
+    renderRouteMap(results.length ? results[0].route : null);
     section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // ---------- 地图：加载高德 ----------
+  function loadAmap() {
+    const cfg = window.AMAP_CONFIG || {};
+    const box = document.getElementById("overview-map");
+    if (!cfg.key || cfg.key.indexOf("填") !== -1) {
+      box.innerHTML =
+        '<div class="map-hint">尚未配置高德 Key。请在 <code>js/config.js</code> 填入你的 Key 和安全密钥。</div>';
+      return;
+    }
+    if (typeof AMapLoader === "undefined") {
+      box.innerHTML =
+        '<div class="map-hint">地图脚本未加载，请检查网络或 loader.js 引入。</div>';
+      return;
+    }
+    AMapLoader.load({ key: cfg.key, version: "2.0" })
+      .then(function (AMap) {
+        AMapRef = AMap;
+        mapReady = true;
+        renderOverviewMap();
+      })
+      .catch(function (e) {
+        box.innerHTML =
+          '<div class="map-hint">地图加载失败：' +
+          (e && e.message ? e.message : e) +
+          "。常见原因：安全密钥未配置，或当前域名未加入高德控制台的白名单。</div>";
+        console.error(e);
+      });
+  }
+
+  // ---------- 地图：景点总览 ----------
+  function renderOverviewMap() {
+    if (!mapReady || !AMapRef) return;
+    const box = document.getElementById("overview-map");
+    const spots = currentDest.spots.filter(function (s) {
+      return coordOf(s.id);
+    });
+    if (!spots.length) {
+      box.innerHTML = '<div class="map-hint">该目的地暂无坐标数据。</div>';
+      return;
+    }
+    if (!overviewMap) {
+      overviewMap = new AMapRef.Map("overview-map", {
+        zoom: 11,
+        resizeEnable: true
+      });
+    } else {
+      overviewMap.clearMap();
+    }
+    const markers = spots.map(function (s) {
+      const pos = coordOf(s.id);
+      const m = new AMapRef.Marker({
+        position: pos,
+        title: s.name,
+        label: {
+          content: '<span class="amap-label">' + s.name + "</span>",
+          direction: "top"
+        }
+      });
+      m.on("click", function () {
+        const iw = new AMapRef.InfoWindow({
+          content:
+            '<div class="amap-iw"><b>' +
+            s.name +
+            "</b><br/>" +
+            (s.conclusion || "") +
+            "</div>",
+          offset: new AMapRef.Pixel(0, -34)
+        });
+        iw.open(overviewMap, pos);
+      });
+      return m;
+    });
+    overviewMap.add(markers);
+    overviewMap.setFitView(markers);
+  }
+
+  // ---------- 地图：路线（按顺序编号连线） ----------
+  function renderRouteMap(route) {
+    const titleEl = document.getElementById("route-map-title");
+    const box = document.getElementById("route-map");
+    if (!mapReady || !AMapRef || !route) {
+      titleEl.style.display = "none";
+      box.style.display = "none";
+      return;
+    }
+    const pts = route.spotIds
+      .map(function (id) {
+        const c = coordOf(id);
+        return c ? { name: spotName(id), pos: c } : null;
+      })
+      .filter(Boolean);
+
+    titleEl.style.display = "";
+    box.style.display = "";
+    if (!pts.length) {
+      box.innerHTML = '<div class="map-hint">该路线景点暂无坐标数据。</div>';
+      return;
+    }
+    if (!routeMap) {
+      routeMap = new AMapRef.Map("route-map", { zoom: 11, resizeEnable: true });
+    } else {
+      routeMap.clearMap();
+    }
+    const markers = pts.map(function (p, i) {
+      return new AMapRef.Marker({
+        position: p.pos,
+        content: '<div class="num-marker">' + (i + 1) + "</div>",
+        offset: new AMapRef.Pixel(-15, -15),
+        label: {
+          content: '<span class="amap-label">' + p.name + "</span>",
+          direction: "top"
+        }
+      });
+    });
+    routeMap.add(markers);
+    const line = new AMapRef.Polyline({
+      path: pts.map(function (p) {
+        return p.pos;
+      }),
+      strokeColor: "#2e8b7a",
+      strokeWeight: 5,
+      strokeStyle: "solid",
+      lineJoin: "round",
+      showDir: true
+    });
+    routeMap.add(line);
+    routeMap.setFitView();
   }
 
   function resetResult() {
@@ -306,5 +450,6 @@
     renderTabs();
     bindEvents();
     selectDest(0); // 默认显示第一个目的地
+    loadAmap(); // 加载高德地图（加载完成后自动渲染总览地图）
   });
 })();
